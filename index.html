@@ -31,16 +31,34 @@
     .jspsych-survey-likert-table {
       margin: 0 auto;
     }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* スクロールバー消して見切れ防止 */
+      height: 100%;
+    }
   </style>
 </head>
 
-<body>
-  <!-- ✅ これがNetlifyが探してるフォーム本体 -->
-<form name="experiment-data" netlify hidden>
-  <input type="hidden" name="data">
-</form>
+<body onclick="requestFullScreen()">
+
+  <!-- ✅ Netlify用の隠しフォーム -->
+  <form name="experiment-data" netlify hidden>
+    <input type="hidden" name="data">
+  </form>
 
   <!-- ✅ 実験スクリプト -->
+  <script>
+    function requestFullScreen() {
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
+      document.body.onclick = null; // 一度で無効化
+    }
+  </script>
+
   <script src="my_experiment.js"></script>
 </body>
 </html>
