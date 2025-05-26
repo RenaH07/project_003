@@ -83,276 +83,277 @@ timeline.push({
   choices: ['練習を始める']
 });
 
-// ==== 練習：st_m_g_01.json ====
-fetch("stimuli/st_m_g_01.json")
-  .then(res => res.json())
-  .then(trialData => {
-timeline.push(
-  {
-    type: 'html-keyboard-response',
-    stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
-    trial_duration: 500,
-    choices: jsPsych.NO_KEYS,
-    on_load: function () {
-      const ctx = document.getElementById('gameCanvas').getContext('2d');
-      const pos = trialData.ball.positions[0];
-      ctx.fillStyle = trialData.canvas.background;
-      ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
-      const g = trialData.goal;
-      ctx.fillStyle = g.color;
-      ctx.beginPath();
-      ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
-      ctx.fill();
-      const o = trialData.obstacle;
-      ctx.fillStyle = o.color;
-      ctx.fillRect(o.x, o.y, o.width, o.height);
-      ctx.fillStyle = trialData.ball.color;
-      ctx.beginPath();
-      ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  },
-  {
-    type: 'html-keyboard-response',
-    stimulus: '<div style="font-size: 60px;">+</div>',
-    trial_duration: 200,
-    choices: jsPsych.NO_KEYS
-  },
-  {
-    type: 'html-keyboard-response',
-    stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
-    choices: jsPsych.NO_KEYS,
-    on_load: function () {
-      const ctx = document.getElementById('gameCanvas').getContext('2d');
-      let frame = 0;
-      function draw() {
-        const pos = trialData.ball.positions[frame];
-        if (!pos) return;
-        ctx.fillStyle = trialData.canvas.background;
-        ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
-        const g = trialData.goal;
+// ==== 非同期開始 ====
+startExperiment();
+
+async function startExperiment() {
+  // ==== 練習 ====
+  const practiceData = await fetch("stimuli/st_m_g_01.json").then(res => res.json());
+
+  timeline.push(
+    {
+      type: 'html-keyboard-response',
+      stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
+      trial_duration: 500,
+      choices: jsPsych.NO_KEYS,
+      on_load: function () {
+        const ctx = document.getElementById('gameCanvas').getContext('2d');
+        const pos = practiceData.ball.positions[0];
+        ctx.fillStyle = practiceData.canvas.background;
+        ctx.fillRect(0, 0, practiceData.canvas.width, practiceData.canvas.height);
+        const g = practiceData.goal;
         ctx.fillStyle = g.color;
         ctx.beginPath();
         ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
         ctx.fill();
-        const o = trialData.obstacle;
+        const o = practiceData.obstacle;
         ctx.fillStyle = o.color;
         ctx.fillRect(o.x, o.y, o.width, o.height);
-        ctx.fillStyle = trialData.ball.color;
+        ctx.fillStyle = practiceData.ball.color;
         ctx.beginPath();
-        ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
+        ctx.arc(pos[0], pos[1], practiceData.parameters.radius, 0, Math.PI * 2);
         ctx.fill();
       }
-      function loop() {
-        if (frame >= trialData.ball.positions.length) {
-          jsPsych.finishTrial();
-          return;
+    },
+    {
+      type: 'html-keyboard-response',
+      stimulus: '<div style="font-size: 60px;">+</div>',
+      trial_duration: 200,
+      choices: jsPsych.NO_KEYS
+    },
+    {
+      type: 'html-keyboard-response',
+      stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
+      choices: jsPsych.NO_KEYS,
+      on_load: function () {
+        const ctx = document.getElementById('gameCanvas').getContext('2d');
+        let frame = 0;
+        function draw() {
+          const pos = practiceData.ball.positions[frame];
+          if (!pos) return;
+          ctx.fillStyle = practiceData.canvas.background;
+          ctx.fillRect(0, 0, practiceData.canvas.width, practiceData.canvas.height);
+          const g = practiceData.goal;
+          ctx.fillStyle = g.color;
+          ctx.beginPath();
+          ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
+          ctx.fill();
+          const o = practiceData.obstacle;
+          ctx.fillStyle = o.color;
+          ctx.fillRect(o.x, o.y, o.width, o.height);
+          ctx.fillStyle = practiceData.ball.color;
+          ctx.beginPath();
+          ctx.arc(pos[0], pos[1], practiceData.parameters.radius, 0, Math.PI * 2);
+          ctx.fill();
         }
-        draw();
-        frame++;
-        requestAnimationFrame(loop);
+        function loop() {
+          if (frame >= practiceData.ball.positions.length) {
+            jsPsych.finishTrial();
+            return;
+          }
+          draw();
+          frame++;
+          requestAnimationFrame(loop);
+        }
+        loop();
       }
-      loop();
-    }
-  },
-  {
-    type: 'survey-likert',
-    questions: [
-      {
-        prompt: "この動きを見てどのように感じましたか？",
-        labels: ["とても不快", "", "", "", "", "", "とても心地よい"],
-        required: true
+    },
+    {
+      type: 'survey-likert',
+      questions: [
+        {
+          prompt: "この動きを見てどのように感じましたか？",
+          labels: ["とても不快", "", "", "", "", "", "とても心地よい"],
+          required: true
+        }
+      ],
+      data: {
+        stimulus_file: "st_m_g_01.json",
+        question_type: "心地よさ（練習）"
       }
-    ],
-    data: {
-      stimulus_file: "st_m_g_01.json",
-      question_type: "心地よさ（練習）"
     }
-  }
-);
+  );
 
-    // ==== 本番案内 ====
-    timeline.push({
-      type: 'html-button-response',
-      stimulus: `
-        <h3>本番開始</h3>
-        <p>ここからが本番です。先ほどと同じ形式でアニメーションが表示されます。</p>
-        <p>アニメーションの後に表示される質問に回答してください。</p>
-      `,
-      choices: ['開始する']
-    });
+  timeline.push({
+    type: 'html-button-response',
+    stimulus: `
+      <h3>本番開始</h3>
+      <p>ここからが本番です。先ほどと同じ形式でアニメーションが表示されます。</p>
+      <p>アニメーションの後に表示される質問に回答してください。</p>
+    `,
+    choices: ['開始する']
+  });
 
-    // ==== 本番試行 ====
-    const file_list = [
-      "st_s_g_01.json", "st_s_g_02.json",
-      "st_m_g_01.json", "st_m_g_02.json",
-      "st_f_g_01.json", "st_f_g_02.json",
-      "zz_s_g_01.json", "zz_s_g_02.json",
-      "zz_m_g_01.json", "zz_m_g_02.json",
-      "zz_f_g_01.json", "zz_f_g_02.json",
-      "c1_s_g_01.json", "c1_s_g_02.json",
-      "c1_m_g_01.json", "c1_m_g_02.json",
-      "c1_f_g_01.json", "c1_f_g_02.json",
-      "c2_s_g_01.json", "c2_s_g_02.json",
-      "c2_m_g_01.json", "c2_m_g_02.json",
-      "c2_f_g_01.json", "c2_f_g_02.json",
-      "ha_s_g_01.json", "ha_s_g_02.json",
-      "ha_m_g_01.json", "ha_m_g_02.json",
-      "ha_f_g_01.json", "ha_f_g_02.json",
-      "la_s_g_01.json", "la_s_g_02.json",
-      "la_m_g_01.json", "la_m_g_02.json",
-      "la_f_g_01.json", "la_f_g_02.json"
-    ];
+  const file_list = [
+    "st_s_g_01.json", "st_s_g_02.json",
+    "st_m_g_01.json", "st_m_g_02.json",
+    "st_f_g_01.json", "st_f_g_02.json",
+    "zz_s_g_01.json", "zz_s_g_02.json",
+    "zz_m_g_01.json", "zz_m_g_02.json",
+    "zz_f_g_01.json", "zz_f_g_02.json",
+    "c1_s_g_01.json", "c1_s_g_02.json",
+    "c1_m_g_01.json", "c1_m_g_02.json",
+    "c1_f_g_01.json", "c1_f_g_02.json",
+    "c2_s_g_01.json", "c2_s_g_02.json",
+    "c2_m_g_01.json", "c2_m_g_02.json",
+    "c2_f_g_01.json", "c2_f_g_02.json",
+    "ha_s_g_01.json", "ha_s_g_02.json",
+    "ha_m_g_01.json", "ha_m_g_02.json",
+    "ha_f_g_01.json", "ha_f_g_02.json",
+    "la_s_g_01.json", "la_s_g_02.json",
+    "la_m_g_01.json", "la_m_g_02.json",
+    "la_f_g_01.json", "la_f_g_02.json"
+  ];
 
-    const questions = [
+  const questions = [
+    {
+      prompt: "この動きを見てどのように感じましたか？",
+      labels: ["とても不快", "", "", "", "", "", "とても心地よい"],
+      required: true
+    },
+    {
+      prompt: "この動きはかわいいと思った",
+      labels: ["全くそう思わない", "", "", "", "", "", "とてもそう思う"],
+      required: true
+    }
+  ];
+
+  const trials = await Promise.all(file_list.map(f => fetch("stimuli/" + f).then(res => res.json())));
+  const shuffled_indices = jsPsych.randomization.shuffle([...Array(file_list.length).keys()]);
+  
+  
+  
+  
+  shuffled_indices.forEach(i => {
+    const trialData = trials[i];
+    const filename = file_list[i];
+    const question = filename.includes("_01.json") ? questions[0] : questions[1];
+
+    timeline.push(
       {
-        prompt: "この動きを見てどのように感じましたか？",
-        labels: ["とても不快", "", "", "", "", "", "とても心地よい"],
-        required: true
+        type: 'html-keyboard-response',
+        stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
+        trial_duration: 500,
+        choices: jsPsych.NO_KEYS,
+        on_load: function () {
+          const ctx = document.getElementById('gameCanvas').getContext('2d');
+          const pos = trialData.ball.positions[0];
+          ctx.fillStyle = trialData.canvas.background;
+          ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
+          const g = trialData.goal;
+          ctx.fillStyle = g.color;
+          ctx.beginPath();
+          ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
+          ctx.fill();
+          const o = trialData.obstacle;
+          ctx.fillStyle = o.color;
+          ctx.fillRect(o.x, o.y, o.width, o.height);
+          ctx.fillStyle = trialData.ball.color;
+          ctx.beginPath();
+          ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
       },
       {
-        prompt: "この動きはかわいいと思った",
-        labels: ["全くそう思わない", "", "", "", "", "", "とてもそう思う"],
-        required: true
-      }
-    ];
-
-    Promise.all(
-      file_list.map(f => fetch("stimuli/" + f).then(res => res.json()))
-    ).then(trials => {
-      const shuffled_indices = jsPsych.randomization.shuffle([...Array(file_list.length).keys()]);
-
-      shuffled_indices.forEach(i => {
-        const trialData = trials[i];
-        const filename = file_list[i];
-        const question = filename.includes("_01.json") ? questions[0] : questions[1];
-
-        timeline.push(
-          {
-            type: 'html-keyboard-response',
-            stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
-            trial_duration: 500,
-            choices: jsPsych.NO_KEYS,
-            on_load: function () {
-              const ctx = document.getElementById('gameCanvas').getContext('2d');
-              const pos = trialData.ball.positions[0];
-              ctx.fillStyle = trialData.canvas.background;
-              ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
-              const g = trialData.goal;
-              ctx.fillStyle = g.color;
-              ctx.beginPath();
-              ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
-              ctx.fill();
-              const o = trialData.obstacle;
-              ctx.fillStyle = o.color;
-              ctx.fillRect(o.x, o.y, o.width, o.height);
-              ctx.fillStyle = trialData.ball.color;
-              ctx.beginPath();
-              ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
-              ctx.fill();
+        type: 'html-keyboard-response',
+        stimulus: '<div style="font-size: 60px;">+</div>',
+        trial_duration: 200,
+        choices: jsPsych.NO_KEYS
+      },
+      {
+        type: 'html-keyboard-response',
+        stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
+        choices: jsPsych.NO_KEYS,
+        on_load: function () {
+          const ctx = document.getElementById('gameCanvas').getContext('2d');
+          let frame = 0;
+          function draw() {
+            const pos = trialData.ball.positions[frame];
+            if (!pos) return;
+            ctx.fillStyle = trialData.canvas.background;
+            ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
+            const g = trialData.goal;
+            ctx.fillStyle = g.color;
+            ctx.beginPath();
+            ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
+            ctx.fill();
+            const o = trialData.obstacle;
+            ctx.fillStyle = o.color;
+            ctx.fillRect(o.x, o.y, o.width, o.height);
+            ctx.fillStyle = trialData.ball.color;
+            ctx.beginPath();
+            ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          function loop() {
+            if (frame >= trialData.ball.positions.length) {
+              jsPsych.finishTrial();
+              return;
             }
-          },
-          {
-            type: 'html-keyboard-response',
-            stimulus: '<div style="font-size: 60px;">+</div>',
-            trial_duration: 200,
-            choices: jsPsych.NO_KEYS
-          },
-          {
-            type: 'html-keyboard-response',
-            stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
-            choices: jsPsych.NO_KEYS,
-            on_load: function () {
-              const ctx = document.getElementById('gameCanvas').getContext('2d');
-              let frame = 0;
-              function draw() {
-                const pos = trialData.ball.positions[frame];
-                if (!pos) return;
-                ctx.fillStyle = trialData.canvas.background;
-                ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
-                const g = trialData.goal;
-                ctx.fillStyle = g.color;
-                ctx.beginPath();
-                ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
-                ctx.fill();
-                const o = trialData.obstacle;
-                ctx.fillStyle = o.color;
-                ctx.fillRect(o.x, o.y, o.width, o.height);
-                ctx.fillStyle = trialData.ball.color;
-                ctx.beginPath();
-                ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
-                ctx.fill();
-              }
-              function loop() {
-                if (frame >= trialData.ball.positions.length) {
-                  jsPsych.finishTrial();
-                  return;
-                }
-                draw();
-                frame++;
-                requestAnimationFrame(loop);
-              }
-              loop();
-            }
-          },
-{
-  type: 'survey-likert',
-  questions: [question],
-  data: {
-    stimulus_file: filename,
-    question_type: filename.includes("_01.json") ? "心地よさ" : "かわいさ"
-  },
-  on_load: () => {
-    document.querySelectorAll('.jspsych-survey-likert .jspsych-survey-likert-label').forEach(label => {
-      label.style.whiteSpace = 'nowrap';
-      label.style.fontSize = '14px';
-      label.style.width = '130px';
-      label.style.display = 'inline-block';
-      label.style.textAlign = 'center';
-      label.style.verticalAlign = 'top';
-    });
-    document.querySelectorAll('.jspsych-survey-likert td').forEach(cell => {
-      cell.style.width = '130px';
-    });
-  }
-}
-        );
-      });
-
-      timeline.push({
-        type: 'html-button-response',
-        stimulus: `<h2>実験終了</h2><p>ご協力ありがとうございました！</p>`,
-        choices: ['完了']
-      });
-
-      jsPsych.init({
-        timeline: timeline,
-        on_finish: function () {
-          const participantID = generateParticipantID();
-          const allData = jsPsych.data.get().json();
-
-          const payload = {
-            id: participantID,
-            data: JSON.parse(allData)
-          };
-
-          console.log("📤 送信するデータ：", payload);
-
-          fetch("/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-              "form-name": "experiment-data",
-              "data": JSON.stringify(payload)
-            })
-          })
-            .then(() => {
-              console.log("✅ Netlifyに送信完了！");
-            })
-            .catch((error) => {
-              console.error("❌ 送信エラー:", error);
-            });
+            draw();
+            frame++;
+            requestAnimationFrame(loop);
+          }
+          loop();
         }
-      });
-    });
+      },
+      {
+        type: 'survey-likert',
+        questions: [question],
+        data: {
+          stimulus_file: filename,
+          question_type: question.prompt
+        },
+        on_load: () => {
+          document.querySelectorAll('.jspsych-survey-likert .jspsych-survey-likert-label').forEach(label => {
+            label.style.whiteSpace = 'nowrap';
+            label.style.fontSize = '14px';
+            label.style.width = '130px';
+            label.style.display = 'inline-block';
+            label.style.textAlign = 'center';
+            label.style.verticalAlign = 'top';
+          });
+          document.querySelectorAll('.jspsych-survey-likert td').forEach(cell => {
+            cell.style.width = '130px';
+          });
+        }
+      }
+    );
   });
+
+  timeline.push({
+    type: 'html-button-response',
+    stimulus: `<h2>実験終了</h2><p>ご協力ありがとうございました！</p>`,
+    choices: ['完了']
+  });
+
+  jsPsych.init({
+    timeline: timeline,
+    on_finish: function () {
+      const participantID = generateParticipantID();
+      const allData = jsPsych.data.get().json();
+
+      const payload = {
+        id: participantID,
+        data: JSON.parse(allData)
+      };
+
+      console.log("📤 送信するデータ：", payload);
+
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          "form-name": "experiment-data",
+          "data": JSON.stringify(payload)
+        })
+      })
+      .then(() => {
+        console.log("✅ Netlifyに送信完了！");
+      })
+      .catch((error) => {
+        console.error("❌ 送信エラー:", error);
+      });
+    }
+  });
+}
