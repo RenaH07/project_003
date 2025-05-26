@@ -330,8 +330,18 @@ jsPsych.init({
   timeline: timeline,
   on_finish: function () {
     const jsonData = jsPsych.data.get().json();
+
+    // F12ログ：データ内容を表示
+    console.log("✅ jsPsychデータ取得成功！", jsonData);
+
     const form = document.forms['experiment-data'];
     form.elements['data'].value = jsonData;
-    form.submit();
+
+    try {
+      form.submit();
+      console.log("📤 フォーム送信を試みました（submit実行済み）");
+    } catch (e) {
+      console.error("❌ フォーム送信に失敗しました:", e);
+    }
   }
 });
