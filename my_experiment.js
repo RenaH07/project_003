@@ -87,85 +87,89 @@ timeline.push({
 fetch("stimuli/st_m_g_01.json")
   .then(res => res.json())
   .then(trialData => {
-    timeline.push(
-      {
-        type: 'html-keyboard-response',
-        stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
-        trial_duration: 500,
-        choices: jsPsych.NO_KEYS,
-        on_load: function () {
-          const ctx = document.getElementById('gameCanvas').getContext('2d');
-          const pos = trialData.ball.positions[0];
-          ctx.fillStyle = trialData.canvas.background;
-          ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
-          const g = trialData.goal;
-          ctx.fillStyle = g.color;
-          ctx.beginPath();
-          ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
-          ctx.fill();
-          const o = trialData.obstacle;
-          ctx.fillStyle = o.color;
-          ctx.fillRect(o.x, o.y, o.width, o.height);
-          ctx.fillStyle = trialData.ball.color;
-          ctx.beginPath();
-          ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      },
-      {
-        type: 'html-keyboard-response',
-        stimulus: '<div style="font-size: 60px;">+</div>',
-        trial_duration: 200,
-        choices: jsPsych.NO_KEYS
-      },
-      {
-        type: 'html-keyboard-response',
-        stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
-        choices: jsPsych.NO_KEYS,
-        on_load: function () {
-          const ctx = document.getElementById('gameCanvas').getContext('2d');
-          let frame = 0;
-          function draw() {
-            const pos = trialData.ball.positions[frame];
-            if (!pos) return;
-            ctx.fillStyle = trialData.canvas.background;
-            ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
-            const g = trialData.goal;
-            ctx.fillStyle = g.color;
-            ctx.beginPath();
-            ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
-            ctx.fill();
-            const o = trialData.obstacle;
-            ctx.fillStyle = o.color;
-            ctx.fillRect(o.x, o.y, o.width, o.height);
-            ctx.fillStyle = trialData.ball.color;
-            ctx.beginPath();
-            ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          function loop() {
-            if (frame >= trialData.ball.positions.length) {
-              jsPsych.finishTrial();
-              return;
-            }
-            draw();
-            frame++;
-            requestAnimationFrame(loop);
-          }
-          loop();
-        }
-      },
-      {
-        type: 'survey-likert',
-        questions: [
-          {
-            prompt: "この動きを見てどのように感じましたか？",
-            labels: ["とても不快", "", "", "", "", "", "とても心地よい"],
-            required: true
-          }
-        ]
+timeline.push(
+  {
+    type: 'html-keyboard-response',
+    stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
+    trial_duration: 500,
+    choices: jsPsych.NO_KEYS,
+    on_load: function () {
+      const ctx = document.getElementById('gameCanvas').getContext('2d');
+      const pos = trialData.ball.positions[0];
+      ctx.fillStyle = trialData.canvas.background;
+      ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
+      const g = trialData.goal;
+      ctx.fillStyle = g.color;
+      ctx.beginPath();
+      ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
+      ctx.fill();
+      const o = trialData.obstacle;
+      ctx.fillStyle = o.color;
+      ctx.fillRect(o.x, o.y, o.width, o.height);
+      ctx.fillStyle = trialData.ball.color;
+      ctx.beginPath();
+      ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  },
+  {
+    type: 'html-keyboard-response',
+    stimulus: '<div style="font-size: 60px;">+</div>',
+    trial_duration: 200,
+    choices: jsPsych.NO_KEYS
+  },
+  {
+    type: 'html-keyboard-response',
+    stimulus: '<canvas id="gameCanvas" width="800" height="600"></canvas>',
+    choices: jsPsych.NO_KEYS,
+    on_load: function () {
+      const ctx = document.getElementById('gameCanvas').getContext('2d');
+      let frame = 0;
+      function draw() {
+        const pos = trialData.ball.positions[frame];
+        if (!pos) return;
+        ctx.fillStyle = trialData.canvas.background;
+        ctx.fillRect(0, 0, trialData.canvas.width, trialData.canvas.height);
+        const g = trialData.goal;
+        ctx.fillStyle = g.color;
+        ctx.beginPath();
+        ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
+        ctx.fill();
+        const o = trialData.obstacle;
+        ctx.fillStyle = o.color;
+        ctx.fillRect(o.x, o.y, o.width, o.height);
+        ctx.fillStyle = trialData.ball.color;
+        ctx.beginPath();
+        ctx.arc(pos[0], pos[1], trialData.parameters.radius, 0, Math.PI * 2);
+        ctx.fill();
       }
-    );
+      function loop() {
+        if (frame >= trialData.ball.positions.length) {
+          jsPsych.finishTrial();
+          return;
+        }
+        draw();
+        frame++;
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+  },
+  {
+    type: 'survey-likert',
+    questions: [
+      {
+        prompt: "この動きを見てどのように感じましたか？",
+        labels: ["とても不快", "", "", "", "", "", "とても心地よい"],
+        required: true
+      }
+    ],
+    data: {
+      stimulus_file: "st_m_g_01.json",
+      question_type: "心地よさ（練習）"
+    }
+  }
+);
 
     // ==== 本番案内 ====
     timeline.push({
@@ -291,10 +295,27 @@ fetch("stimuli/st_m_g_01.json")
               loop();
             }
           },
-          {
-            type: 'survey-likert',
-            questions: [question]
-          }
+{
+  type: 'survey-likert',
+  questions: [question],
+  data: {
+    stimulus_file: filename,
+    question_type: filename.includes("_01.json") ? "心地よさ" : "かわいさ"
+  },
+  on_load: () => {
+    document.querySelectorAll('.jspsych-survey-likert .jspsych-survey-likert-label').forEach(label => {
+      label.style.whiteSpace = 'nowrap';
+      label.style.fontSize = '14px';
+      label.style.width = '130px';
+      label.style.display = 'inline-block';
+      label.style.textAlign = 'center';
+      label.style.verticalAlign = 'top';
+    });
+    document.querySelectorAll('.jspsych-survey-likert td').forEach(cell => {
+      cell.style.width = '130px';
+    });
+  }
+}
         );
       });
 
