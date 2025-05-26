@@ -36,11 +36,9 @@
 
 <body>
   <!-- ✅ これがNetlifyが探してるフォーム本体 -->
-  <form name="experiment-data" netlify netlify-honeypot="dummy">
-    <input type="hidden" name="form-name" value="experiment-data">
-    <input type="hidden" name="data">
-    <input type="text" name="dummy" style="display:none">
-  </form>
+<form name="experiment-data" netlify hidden>
+  <input type="hidden" name="data">
+</form>
 
   <!-- ✅ 実験スクリプト -->
   <script src="my_experiment.js"></script>
