@@ -4,42 +4,45 @@
   <meta charset="utf-8">
   <title>予備調査</title>
 
+  <!-- jsPsych 本体とCSS -->
   <script src="jspsych.js"></script>
   <link href="jspsych.css" rel="stylesheet">
 
-  <!-- ★追加ここ！ -->
-<style>
-  .jspsych-survey-likert-opts li {
-    width: 100px !important;
-    display: inline-block;
-    text-align: center;
-    vertical-align: top;
-  }
-
-  .jspsych-survey-likert-opt-label {
-    white-space: nowrap;
-    font-size: 15px;
-  }
-
-  .jspsych-survey-likert-table {
-    margin: 0 auto;
-  }
-</style>
-
+  <!-- プラグイン -->
   <script src="plugins/jspsych-html-button-response.js"></script>
   <script src="plugins/jspsych-html-keyboard-response.js"></script>
   <script src="plugins/jspsych-survey-likert.js"></script>
   <script src="plugins/jspsych-survey-html-form.js"></script>
-</head>
-<body>
-  <!-- ✅ Netlifyがフォームの存在を認識するためだけに必要な記述 -->
-<form name="experiment-data" netlify>
-  <input type="hidden" name="form-name" value="experiment-data">
-  <input type="hidden" name="data">
-  <input type="text" name="dummy" style="display:none">
-</form>
 
-  <!-- 実験の本体スクリプト -->
+  <style>
+    /* リッカート調整（見た目のやつ） */
+    .jspsych-survey-likert-opts li {
+      width: 100px !important;
+      display: inline-block;
+      text-align: center;
+      vertical-align: top;
+    }
+
+    .jspsych-survey-likert-opt-label {
+      white-space: nowrap;
+      font-size: 15px;
+    }
+
+    .jspsych-survey-likert-table {
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ✅ これがNetlifyが探してるフォーム本体 -->
+  <form name="experiment-data" netlify netlify-honeypot="dummy">
+    <input type="hidden" name="form-name" value="experiment-data">
+    <input type="hidden" name="data">
+    <input type="text" name="dummy" style="display:none">
+  </form>
+
+  <!-- ✅ 実験スクリプト -->
   <script src="my_experiment.js"></script>
 </body>
 </html>

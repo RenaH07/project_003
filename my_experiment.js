@@ -324,3 +324,14 @@ const file_list = [
       });
     });
   });
+
+
+jsPsych.init({
+  timeline: timeline,
+  on_finish: function () {
+    const jsonData = jsPsych.data.get().json();
+    const form = document.forms['experiment-data'];
+    form.elements['data'].value = jsonData;
+    form.submit();
+  }
+});
