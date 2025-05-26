@@ -161,11 +161,19 @@ async function startExperiment() {
     {
       type: 'survey-likert',
       questions: [
-        {
-          prompt: "この動きを見てどのように感じましたか？",
-          labels: ["とても不快", "", "", "", "", "", "とても心地よい"],
-          required: true
-        }
+  {
+    prompt: "この動きを見てどのように感じましたか？",
+    labels: [
+      "とても不快",
+      "不快",
+      "やや不快",
+      "どちらでもない",
+      "やや心地よい",
+      "心地よい",
+      "とても心地よい"
+    ],
+    required: true
+  },
       ],
       data: {
         stimulus_file: "st_m_g_01.json",
@@ -205,18 +213,34 @@ async function startExperiment() {
     "la_f_g_01.json", "la_f_g_02.json"
   ];
 
-  const questions = [
-    {
-      prompt: "この動きを見てどのように感じましたか？",
-      labels: ["とても不快", "", "", "", "", "", "とても心地よい"],
-      required: true
-    },
-    {
-      prompt: "この動きはかわいいと思った",
-      labels: ["全くそう思わない", "", "", "", "", "", "とてもそう思う"],
-      required: true
-    }
-  ];
+const questions = [
+  {
+    prompt: "この動きを見てどのように感じましたか？",
+    labels: [
+      "とても不快",
+      "不快",
+      "やや不快",
+      "どちらでもない",
+      "やや心地よい",
+      "心地よい",
+      "とても心地よい"
+    ],
+    required: true
+  },
+  {
+    prompt: "この動きはかわいいと思った",
+    labels: [
+      "全くそう思わない",
+      "あまりそう思わない",
+      "少しそう思わない",
+      "どちらとも言えない",
+      "少しそう思う",
+      "まあまあそう思う",
+      "とてもそう思う"
+    ],
+    required: true
+  }
+];
 
   const trials = await Promise.all(file_list.map(f => fetch("stimuli/" + f).then(res => res.json())));
   const shuffled_indices = jsPsych.randomization.shuffle([...Array(file_list.length).keys()]);
