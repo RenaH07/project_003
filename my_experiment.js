@@ -389,14 +389,14 @@ timeline.push({
   choices: ['完了']
 });
 
-}  // ← ← ← ★★★ このカッコが必要！ startExperiment 関数の終わり ★★★
+// ✅ ★★★ jsPsych.init を関数の中に入れる！！！
+jsPsych.init({
+  timeline: timeline
+});
 
- // 最後に初期化！
-  jsPsych.init({
-    timeline: timeline
-  });
-
+// ✅ ★★★ このカッコは必要！startExperiment 関数の終わり！
+} 
 
 // ==== 非同期開始 ====
-// 呼び出しは一番最後に！
+// 関数の「呼び出し」は一番最後でOK！
 startExperiment();
