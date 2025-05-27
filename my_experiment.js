@@ -345,39 +345,54 @@ const questions = [
     );
   });
 
-  timeline.push({
-    type: 'html-button-response',
-    stimulus: `<h2>実験終了</h2><p>ご協力ありがとうございました！</p>`,
-    choices: ['完了']
-  });
+// ==== 実験終了メッセージと送信処理 ====
 
-  jsPsych.init({
-    timeline: timeline,
-    on_finish: function () {
-      const participantID = generateParticipantID();
-      const allData = jsPsych.data.get().json();
+// まず「送信中です」だけ表示するトライアル
+timeline.push({
+  type: 'html-button-response',
+  stimulus: `<h2>実験終了</h2><p>ご協力ありがとうございました！</p><p>データを送信しています…</p>`,
+  choices: [],
+  on_start: function () {
+    const participantID = generateParticipantID();
+    const allData = jsPsych.data.get().json();
 
-      const payload = {
-        id: participantID,
-        data: JSON.parse(allData)
-      };
+    const payload = {
+      id: participantID,
+      data: JSON.parse(allData)
+    };
 
-      console.log("📤 送信するデータ：", payload);
+    console.log("📤 送信するデータ：", payload);
 
-      fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          "form-name": "experiment-data",
-          "data": JSON.stringify(payload)
-        })
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        "form-name": "experiment-data",
+        "data": JSON.stringify(payload)
       })
-      .then(() => {
-        console.log("✅ Netlifyに送信完了！");
-      })
-      .catch((error) => {
-        console.error("❌ 送信エラー:", error);
-      });
-    }
-  });
-}
+    })
+    .then(() => {
+      console.log("✅ Netlifyに送信完了！");
+      jsPsych.finishTrial();  // 次の trial（完了ボタン付き画面）へ進む
+    })
+    .catch((error) => {
+      console.error("❌ 送信エラー:", error);
+      jsPsych.finishTrial();  // エラーでも進めるようにしておく
+    });
+  }
+});
+
+// 送信完了後に表示される「完了」ボタン画面
+timeline.push({
+  type: 'html-button-response',
+  stimulus: `<h2>データ送信完了！</h2><p>これにて実験は終了です。</p>`,
+  choices: ['完了']
+});
+
+}  // ← ← ← ★★★ このカッコが必要！ startExperiment 関数の終わり ★★★
+
+// ==== jsPsych.init ====
+// on_finish の中で送信しないように変更
+jsPsych.init({
+  timeline: timeline
+});
