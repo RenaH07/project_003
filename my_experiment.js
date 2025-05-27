@@ -84,9 +84,9 @@ timeline.push({
 });
 
 // ==== 非同期開始 ====
-startExperiment();
-
 async function startExperiment() {
+
+
   // ==== 練習 ====
   const practiceData = await fetch("stimuli/st_m_g_01.json").then(res => res.json());
 
@@ -391,8 +391,12 @@ timeline.push({
 
 }  // ← ← ← ★★★ このカッコが必要！ startExperiment 関数の終わり ★★★
 
-// ==== jsPsych.init ====
-// on_finish の中で送信しないように変更
-jsPsych.init({
-  timeline: timeline
-});
+ // 最後に初期化！
+  jsPsych.init({
+    timeline: timeline
+  });
+
+
+// ==== 非同期開始 ====
+// 呼び出しは一番最後に！
+startExperiment();
